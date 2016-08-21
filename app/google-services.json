@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "372198296073",
+    "firebase_url": "https://tempmonitor-e7457.firebaseio.com",
+    "project_id": "tempmonitor-e7457",
+    "storage_bucket": "tempmonitor-e7457.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372198296073:android:d816d7f474521c52",
+        "android_client_info": {
+          "package_name": "com.appstertech.tempmonitor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372198296073-vo33sjln1581iu0bhfrtjbj1fb6m7rjd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl9mMWa2BeqCUmOLqDyp1Ujix-g07UAmk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -88,8 +88,8 @@ public class LoginActivity extends BaseActivity {
         super.onStart();
 //        mAutoCompleteEmail.setText("puthinan");
 //        mEditTextPassword.setText("P@ssw0rd1168");
-        mAutoCompleteEmail.setText("TextMobile2");
-        mEditTextPassword.setText("P@ssw0rd");
+//        mAutoCompleteEmail.setText("TestMobile2");
+//        mEditTextPassword.setText("P@ssw0rd");
     }
 
     private void attempLaunchHome() {
@@ -162,7 +162,7 @@ public class LoginActivity extends BaseActivity {
             public void onResponse(Call<UserGson> call, Response<UserGson> response) {
                 isRequestingLogin = false;
                 showProgress(false);
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && null != response.body()) {
                     SharedPrefUtils.saveUser(LoginActivity.this, response.body());
                     gotoHomeActivity();
                 } else {

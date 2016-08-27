@@ -112,6 +112,10 @@ public class RefridgeGson implements Parcelable {
     @SerializedName("LinkWeb")
     private String urlToWeb;
 
+
+
+
+    private String headerLocationViewTitle = null;
     public RefridgeGson() {
     }
 
@@ -330,4 +334,12 @@ public class RefridgeGson implements Parcelable {
             return new RefridgeGson[size];
         }
     };
+
+    public String getHeaderLocationViewTitle() {
+        return headerLocationViewTitle;
+    }
+
+    public void setHeaderLocationViewTitle(String headerLocationViewTitle) {
+        this.headerLocationViewTitle = headerLocationViewTitle;
+    }
 }

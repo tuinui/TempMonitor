@@ -34,8 +34,10 @@ import com.appstertech.tempmonitor.service.model.TempLogGson;
 import com.appstertech.tempmonitor.ui.detail.DetailActivity;
 import com.appstertech.tempmonitor.ui.home.refrigerator.RefridgeRecyclerAdapter;
 
+import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -60,7 +62,7 @@ public class HomeFragment extends BaseFragment {
 
     private RefridgeRecyclerAdapter mAdapter = new RefridgeRecyclerAdapter() {
         @Override
-        public void onBindViewHolder(final RefridgeRecyclerAdapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(final RecyclerView.ViewHolder genericHolder, int position) {
             if (null == mDatas || mDatas.isEmpty()) {
                 return;
             }
@@ -68,92 +70,114 @@ public class HomeFragment extends BaseFragment {
             if (null == data) {
                 return;
             }
-            String openDoorStatus = data.getStatusOpenDoor();
+            if (/*getItemViewType(position) == VIEW_TYPE_DATA && */genericHolder instanceof ViewHolder) {
+                final ViewHolder dataHolder = (ViewHolder) genericHolder;
+                String openDoorStatus = data.getStatusOpenDoor();
 
-            if (TextUtils.equals(openDoorStatus, "Not Install")) {
-                //blue
-                ViewCompat.setBackgroundTintList(holder.btnDoorStatus, ColorStateList.valueOf(ContextCompat.getColor(holder.btnDoorStatus.getContext(), R.color.blue_door_status_not_install)));
-            } else if (TextUtils.equals(openDoorStatus, "Close")) {
-                //green
-                ViewCompat.setBackgroundTintList(holder.btnDoorStatus, ColorStateList.valueOf(ContextCompat.getColor(holder.btnDoorStatus.getContext(), R.color.green_door_status_close)));
-            } else if (TextUtils.equals(openDoorStatus, "Open")) {
-                //red
-                ViewCompat.setBackgroundTintList(holder.btnDoorStatus, ColorStateList.valueOf(ContextCompat.getColor(holder.btnDoorStatus.getContext(), R.color.red_door_status_open)));
+                if (TextUtils.equals(openDoorStatus, "Not Install")) {
+                    //blue
+                    ViewCompat.setBackgroundTintList(dataHolder.btnDoorStatus, ColorStateList.valueOf(ContextCompat.getColor(dataHolder.btnDoorStatus.getContext(), R.color.blue_door_status_not_install)));
+                } else if (TextUtils.equals(openDoorStatus, "Close")) {
+                    //green
+                    ViewCompat.setBackgroundTintList(dataHolder.btnDoorStatus, ColorStateList.valueOf(ContextCompat.getColor(dataHolder.btnDoorStatus.getContext(), R.color.green_door_status_close)));
+                } else if (TextUtils.equals(openDoorStatus, "Open")) {
+                    //red
+                    ViewCompat.setBackgroundTintList(dataHolder.btnDoorStatus, ColorStateList.valueOf(ContextCompat.getColor(dataHolder.btnDoorStatus.getContext(), R.color.red_door_status_open)));
 
-            }
-            holder.btnDoorStatus.setText(data.getStatusOpenDoor());
-            String tempStr = data.getTempIn();
+                }
+                dataHolder.btnDoorStatus.setText(data.getStatusOpenDoor());
+                String tempStr = data.getTempIn();
 
-            if (!TextUtils.isEmpty(tempStr)) {
-                tempStr = tempStr.trim();
-                try {
-                    Float temp = Float.valueOf(tempStr);
-                    Float maxRange = Float.valueOf(data.getMaxRang());
-                    Float minRange = Float.valueOf(data.getMinRang());
-                    if (maxRange >= temp && temp >= minRange) {
-                        holder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.blue_cool));
-                    } else {
-                        holder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.red_hot));
+                if (!TextUtils.isEmpty(tempStr)) {
+                    tempStr = tempStr.trim();
+                    try {
+                        Float temp = Float.valueOf(tempStr);
+                        Float maxRange = Float.valueOf(data.getMaxRang());
+                        Float minRange = Float.valueOf(data.getMinRang());
+                        if (maxRange >= temp && temp >= minRange) {
+                            dataHolder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(dataHolder.itemView.getContext(), R.color.blue_cool));
+                        } else {
+                            dataHolder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(dataHolder.itemView.getContext(), R.color.red_hot));
+                        }
+                    } catch (Exception e) {
+                        dataHolder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(dataHolder.itemView.getContext(), R.color.green_no_data));
                     }
-                } catch (Exception e) {
-                    holder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green_no_data));
+
+                    dataHolder.tvTemp.setText(tempStr + "ºC");
+                } else {
+                    dataHolder.tvTemp.setText("No Data !");
+                    dataHolder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(dataHolder.itemView.getContext(), R.color.green_no_data));
                 }
 
-                holder.tvTemp.setText(tempStr + "ºC");
-            } else {
-                holder.tvTemp.setText("No Data !");
-                holder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green_no_data));
-            }
+                dataHolder.imgMore.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (null == mDatas || mDatas.isEmpty()) {
+                            return;
+                        }
+                        RefridgeGson data = mDatas.get(dataHolder.getAdapterPosition());
+                        if (null == data) {
+                            return;
+                        }
+                        popUpMenuMore(view, view.getContext(), data.getCode());
+                    }
+                });
 
-            holder.imgMore.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (null == mDatas || mDatas.isEmpty()) {
-                        return;
-                    }
-                    RefridgeGson data = mDatas.get(holder.getAdapterPosition());
-                    if (null == data) {
-                        return;
-                    }
-                    popUpMenuMore(view, view.getContext(), data.getCode());
+                dataHolder.tvName.setText(data.getRefrigeratorName());
+                if (!TextUtils.isEmpty(data.getRefrigeratorUseRangefrom()) || !TextUtils.isEmpty(data.getRefrigeratorUseRangeTo())) {
+                    dataHolder.tvModelType.setText(data.getRefrigeratorUseRangefrom().trim() + " to " + data.getRefrigeratorUseRangeTo().trim() + " ºC");
+                    dataHolder.tvModelType.setVisibility(View.VISIBLE);
+                } else {
+                    dataHolder.tvModelType.setVisibility(View.INVISIBLE);
                 }
-            });
-
-            holder.tvName.setText(data.getRefrigeratorName());
-            if (!TextUtils.isEmpty(data.getRefrigeratorUseRangefrom()) || !TextUtils.isEmpty(data.getRefrigeratorUseRangeTo())) {
-                holder.tvModelType.setText(data.getRefrigeratorUseRangefrom().trim() + " to " + data.getRefrigeratorUseRangeTo().trim() + " ºC");
-                holder.tvModelType.setVisibility(View.VISIBLE);
-            } else {
-                holder.tvModelType.setVisibility(View.INVISIBLE);
-            }
 
 
-            if (!TextUtils.isEmpty(data.getRefrigeratorTempSetpoint())) {
-                holder.btnTempSetPoint.setText(data.getRefrigeratorTempSetpoint().trim() + "ºC");
-                holder.btnTempSetPoint.setVisibility(View.VISIBLE);
-            } else {
-                holder.btnTempSetPoint.setVisibility(View.INVISIBLE);
-            }
-
-
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (null == mDatas || mDatas.isEmpty()) {
-                        return;
-                    }
-                    RefridgeGson data = mDatas.get(holder.getAdapterPosition());
-                    if (null == data) {
-                        return;
-                    }
-                    Intent intent = new Intent(view.getContext(), DetailActivity.class);
-                    intent.putExtra(DetailActivity.KEY_DATA_REFRIDGE_GSON, data);
-                    view.getContext().startActivity(intent);
+                if (!TextUtils.isEmpty(data.getRefrigeratorTempSetpoint())) {
+                    dataHolder.btnTempSetPoint.setText(data.getRefrigeratorTempSetpoint().trim() + "ºC");
+                    dataHolder.btnTempSetPoint.setVisibility(View.VISIBLE);
+                } else {
+                    dataHolder.btnTempSetPoint.setVisibility(View.INVISIBLE);
                 }
-            });
+
+
+                dataHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (null == mDatas || mDatas.isEmpty()) {
+                            return;
+                        }
+                        RefridgeGson data = mDatas.get(dataHolder.getAdapterPosition());
+                        if (null == data) {
+                            return;
+                        }
+                        Intent intent = new Intent(view.getContext(), DetailActivity.class);
+                        intent.putExtra(DetailActivity.KEY_DATA_REFRIDGE_GSON, data);
+                        view.getContext().startActivity(intent);
+                    }
+                });
+
+            } else if (genericHolder instanceof HeaderViewHolder) {
+                HeaderViewHolder headerVH = (HeaderViewHolder) genericHolder;
+                headerVH.tvHeader.setText(data.getHeaderLocationViewTitle());
+            }
+
 
         }
 
+
+        @Override
+        public int getItemViewType(int position) {
+            if (mDatas == null || mDatas.isEmpty()) {
+                return super.getItemViewType(position);
+            }
+
+            if (!TextUtils.isEmpty(mDatas.get(position).getHeaderLocationViewTitle())) {
+                return RefridgeRecyclerAdapter.VIEW_TYPE_HEADER;
+            } else {
+                return RefridgeRecyclerAdapter.VIEW_TYPE_DATA;
+            }
+
+        }
 
         @Override
         public int getItemCount() {
@@ -244,15 +268,45 @@ public class HomeFragment extends BaseFragment {
         });
     }
 
-    private HashMap<String, RefridgeGson> mMapDatas = new HashMap<>();
+//    private HashMap<String, List<RefridgeGson>> mMapDatas = new HashMap<>();
 
-//    private HashMap<String,RefridgeGson> parseToMap(List<RefridgeGson> datas){
-//        HashMap<String,RefridgeGson> mapDatas = new HashMap<>();
-//        for(RefridgeGson data : datas){
-//            mapDatas.put(data.get)
-//        }
-//    }
 
+    private List<RefridgeGson> parseToViewModel(List<RefridgeGson> chatGson) {
+        List<RefridgeGson> datas = new ArrayList<>();
+
+        LinkedHashMap<String, List<RefridgeGson>> map = parseToMap(chatGson);
+
+        for (String key : map.keySet()) {
+            datas.addAll(map.get(key));
+        }
+        return datas;
+    }
+
+    private LinkedHashMap<String, List<RefridgeGson>> parseToMap(List<RefridgeGson> datas) {
+        LinkedHashMap<String, List<RefridgeGson>> map = new LinkedHashMap<>();
+        if (null == datas) {
+            return map;
+        }
+        for (RefridgeGson data : datas) {
+
+            String locationName = data.getLocationName();
+            if (map.containsKey(locationName)) {
+                for (RefridgeGson data2 : datas) {
+                    if (TextUtils.equals(data2.getLocationName(), locationName)) {
+                        map.get(locationName).add(data2);
+                    }
+                }
+            } else {
+                List<RefridgeGson> list = new ArrayList<>();
+                RefridgeGson header = new RefridgeGson();
+                header.setHeaderLocationViewTitle(data.getLocationName());
+                list.add(header);
+                list.add(data);
+                map.put(locationName, list);
+            }
+        }
+        return map;
+    }
 
     private void showMoreTempHistory(List<TempLogGson> datas, final Context context) {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
@@ -299,7 +353,7 @@ public class HomeFragment extends BaseFragment {
         showLoading();
         Retrofit retrofit = RetrofitManager.build();
         TempMonitorService service = retrofit.create(TempMonitorService.class);
-        Call<List<RefridgeGson>> call = service.getRefrigerator(String.valueOf(0));
+        Call<List<RefridgeGson>> call = service.getRefrigerator(UID);
         //TODO change back to UID
         isRequestingRefridge = true;
         call.enqueue(new Callback<List<RefridgeGson>>() {
@@ -309,7 +363,7 @@ public class HomeFragment extends BaseFragment {
                 dismissLoading();
                 if (response.isSuccessful()) {
                     mDatas.clear();
-                    mDatas.addAll(response.body());
+                    mDatas.addAll(parseToViewModel(response.body()));
                     if (null != activity && !activity.isFinishing()) {
 
                         notifyRefridgeData();

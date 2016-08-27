@@ -19,13 +19,33 @@ import com.appstertech.tempmonitor.utils.DrawableHelper;
 /**
  * Created by nuimamon on 31/7/2559.
  */
-public abstract class RefridgeRecyclerAdapter extends RecyclerView.Adapter<RefridgeRecyclerAdapter.ViewHolder> {
+public abstract class RefridgeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    public static final int VIEW_TYPE_HEADER = 1;
+    public static final int VIEW_TYPE_DATA = 2;
+
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_refrigerator,parent,false));
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_HEADER) {
+            return new HeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_header_refrigerator, parent, false));
+        } else if (viewType == VIEW_TYPE_DATA) {
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_refrigerator, parent, false));
+        } else {
+            return new RecyclerView.ViewHolder(new View(parent.getContext())) {
+
+            };
+        }
+//        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.view_refrigerator,parent,false));
     }
 
+    public class HeaderViewHolder extends RecyclerView.ViewHolder {
 
+        public final TextView tvHeader;
+
+        public HeaderViewHolder(View v) {
+            super(v);
+            tvHeader = (TextView) v.findViewById(R.id.textview_header_refrigerator);
+        }
+    }
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -39,19 +59,19 @@ public abstract class RefridgeRecyclerAdapter extends RecyclerView.Adapter<Refri
         public ViewHolder(View v) {
             super(v);
             tvName = (TextView) v.findViewById(R.id.textview_refrigerator_model_name);
-            imgMore = (ImageView)v.findViewById(R.id.imageview_refrigerator_more);
-            cardRoot = (CardView)v.findViewById(R.id.cardview_refrigerator_root);
-            btnDoorStatus = (Button)v.findViewById(R.id.button_refrigerator_door_status);
-            tvTemp = (TextView)v.findViewById(R.id.textview_refrigerator_temperature);
-            tvModelType = (TextView)v.findViewById(R.id.textview_refrigerator_model_type);
-            btnTempSetPoint = (Button)v.findViewById(R.id.button_refrigerator_temp_set_point);
+            imgMore = (ImageView) v.findViewById(R.id.imageview_refrigerator_more);
+            cardRoot = (CardView) v.findViewById(R.id.cardview_refrigerator_root);
+            btnDoorStatus = (Button) v.findViewById(R.id.button_refrigerator_door_status);
+            tvTemp = (TextView) v.findViewById(R.id.textview_refrigerator_temperature);
+            tvModelType = (TextView) v.findViewById(R.id.textview_refrigerator_model_type);
+            btnTempSetPoint = (Button) v.findViewById(R.id.button_refrigerator_temp_set_point);
 //            ViewCompat.setBackgroundTintList(btnTempSetPoint, ColorStateList.valueOf(ContextCompat.getColor(v.getContext(),R.color.green_status)));
 //            ViewCompat.setBackgroundTintList(btnDoorStatus, ColorStateList.valueOf(ContextCompat.getColor(v.getContext(),R.color.green_status)));
 
 //            DrawableHelper.withContext(v.getContext()).withColor().applyTo(btnDoorStatus);
         }
 
-        public Context getContext(){
+        public Context getContext() {
             return itemView.getContext();
         }
     }

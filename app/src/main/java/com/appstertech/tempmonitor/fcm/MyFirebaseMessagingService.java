@@ -15,6 +15,9 @@ import com.appstertech.tempmonitor.HomeActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
+import java.util.Date;
 
 /**
  * Created by nuimamon on 17/8/2559.
@@ -49,9 +52,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             if (remoteMessage.getData().get("data") != null) {
-                MyRemoteMessageData messageData = new Gson().fromJson(remoteMessage.getData().get("data"), MyRemoteMessageData.class);
-//                sendNotification("Type : " + messageData.getType() + "\n Message : " + messageData.getMessage());
-                sendNotification(messageData.getMessage());
+                MyRemoteMessageData messageData = null;
+                try {
+                    messageData = new Gson().fromJson(remoteMessage.getData().get("data"), MyRemoteMessageData.class);
+                } catch (JsonSyntaxException ignored) {
+
+                }
+
+                if (null != messageData) {
+                    sendNotification(messageData.getMessage());
+                }
+
             }
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
         }
@@ -79,8 +90,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-//                .setContentTitle(messageBody)
+                .setSmallIcon(R.drawable.ic_twl_launcher)
+                .setContentTitle(getString(R.string.app_name))
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
@@ -88,6 +99,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(0/* ID of notification */, notificationBuilder.build());
+
+        long time = new Date().getTime();
+        String tmpStr = String.valueOf(time);
+        String last4Str = tmpStr.substring(tmpStr.length() - 5);
+        int notificationId = Integer.valueOf(last4Str);
+        notificationManager.notify(notificationId/* ID of notification */, notificationBuilder.build());
     }
 }

@@ -7,4 +7,8 @@
     <color name="blue_cool">#00A7D3</color>
     <color name="green_no_data">#31BBBD</color>
     <color name="red_hot">#D23723</color>
+
+    <color name="blue_door_status_not_install">#4f8ebb</color>
+    <color name="red_door_status_open">#cc0000</color>
+    <color name="green_door_status_close">@color/colorAccent</color>
 </resources>

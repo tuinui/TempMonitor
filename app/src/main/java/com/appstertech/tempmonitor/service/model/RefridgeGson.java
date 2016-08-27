@@ -9,9 +9,9 @@ import com.google.gson.annotations.SerializedName;
  * Created by nuimamon on 31/7/2559.
  */
 public class RefridgeGson implements Parcelable {
-//    "Code": "0001",
+    //    "Code": "0001",
 //            "RefrigeratorName": "RFM-CHM-002",
-//            "RefrigeratorDescription": "RFM-CHM-002",
+//            "RefrigeratorDescription": "ใช้ในการดเก็บน้ำยาเครื่อง Automade",
 //            "Contact": "Chanyuth Pongkun",
 //            "TypeUID": 1,
 //            "LocationUID": 1,
@@ -23,18 +23,24 @@ public class RefridgeGson implements Parcelable {
 //            "Minrang": "2",
 //            "MinrangOut": "-100",
 //            "Image": "U3lzdGVtLkJ5dGVbXQ==",
-//            "ImageString": null,
-//            "RefrigeratorModel": "Sanden Intercool",
+//            "ImageString": "http://telecorp.co.th/tmmobile/HLGetimagebyRefrigerator.ashx?RefrigeratorCode=0001&&MSOrganisationUID=1",
+//            "RefrigeratorModel": "SDC-1500AY",
 //            "RefrigeratorBand": "Sanden Intercool",
 //            "RefrigeratorSN": "SDC1500103A-0511-00234",
-//            "RefrigeratorIDCode": "Sanden Intercool",
-//            "RefrigeratorHNNo": "Sanden Intercool",
+//            "RefrigeratorIDCode": "RFM-CHM-002",
+//            "RefrigeratorHNNo": "N/A",
 //            "RefrigeratorTempSetpoint": "4",
 //            "RefrigeratorAccuracy": "6",
 //            "RefrigeratorUseRangefrom": "2",
 //            "RefrigeratorUseRangeTo": "8",
-//            "RefrigeratorOpenDoorTime": "Sanden Intercool",
-//            "RefrigeratorPMCALInterval": "5"
+//            "RefrigeratorOpenDoorTime": "4",
+//            "RefrigeratorPMCALInterval": "5",
+//            "tempin": "9.10",
+//            "tempout": "30.80",
+//            "humi": "52.00",
+//            "StatusOpenDoors": "Close",
+//            "StatusRefrig": "",
+//            "LinkWeb": "http://www.telecorp.co.th/HM/login/Loadlogin"
     @SerializedName("Code")
     private String code;
     @SerializedName("RefrigeratorName")
@@ -87,6 +93,24 @@ public class RefridgeGson implements Parcelable {
     private String refrigeratorOpenDoorTime;
     @SerializedName("RefrigeratorPMCALInterval")
     private String refrigeratorPMCALInterval;
+    //            "tempin": "9.10",
+//            "tempout": "30.80",
+//            "humi": "52.00",
+//            "StatusOpenDoors": "Close",
+//            "StatusRefrig": "",
+//            "LinkWeb": "http://www.telecorp.co.th/HM/login/Loadlogin"
+    @SerializedName("tempin")
+    private String tempIn;
+    @SerializedName("tempout")
+    private String tempOut;
+    @SerializedName("humi")
+    private String humid;
+    @SerializedName("StatusOpenDoors")
+    private String statusOpenDoor;
+    @SerializedName("StatusRefrig")
+    private String statusRefrigde;
+    @SerializedName("LinkWeb")
+    private String urlToWeb;
 
     public RefridgeGson() {
     }
@@ -95,210 +119,129 @@ public class RefridgeGson implements Parcelable {
         return code;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
     public String getRefrigeratorName() {
         return refrigeratorName;
-    }
-
-    public void setRefrigeratorName(String refrigeratorName) {
-        this.refrigeratorName = refrigeratorName;
     }
 
     public String getRefrigeratorDescription() {
         return refrigeratorDescription;
     }
 
-    public void setRefrigeratorDescription(String refrigeratorDescription) {
-        this.refrigeratorDescription = refrigeratorDescription;
-    }
-
     public String getContact() {
         return contact;
-    }
-
-    public void setContact(String contact) {
-        this.contact = contact;
     }
 
     public String getTypeUID() {
         return typeUID;
     }
 
-    public void setTypeUID(String typeUID) {
-        this.typeUID = typeUID;
-    }
-
     public String getLocationUID() {
         return locationUID;
-    }
-
-    public void setLocationUID(String locationUID) {
-        this.locationUID = locationUID;
     }
 
     public String getLocationName() {
         return locationName;
     }
 
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
-    }
-
     public String getMsOrganisationUID() {
         return msOrganisationUID;
-    }
-
-    public void setMsOrganisationUID(String msOrganisationUID) {
-        this.msOrganisationUID = msOrganisationUID;
     }
 
     public String getTypeName() {
         return typeName;
     }
 
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
-    }
-
     public String getMaxRang() {
         return maxRang;
-    }
-
-    public void setMaxRang(String maxRang) {
-        this.maxRang = maxRang;
     }
 
     public String getMaxRangOut() {
         return maxRangOut;
     }
 
-    public void setMaxRangOut(String maxRangOut) {
-        this.maxRangOut = maxRangOut;
-    }
-
     public String getMinRang() {
         return minRang;
-    }
-
-    public void setMinRang(String minRang) {
-        this.minRang = minRang;
     }
 
     public String getMinRangOut() {
         return minRangOut;
     }
 
-    public void setMinRangOut(String minRangOut) {
-        this.minRangOut = minRangOut;
-    }
-
     public String getImage() {
         return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public String getImageString() {
         return imageString;
     }
 
-    public void setImageString(String imageString) {
-        this.imageString = imageString;
-    }
-
     public String getRefrigeratorModel() {
         return refrigeratorModel;
-    }
-
-    public void setRefrigeratorModel(String refrigeratorModel) {
-        this.refrigeratorModel = refrigeratorModel;
     }
 
     public String getRefrigeratorBand() {
         return refrigeratorBand;
     }
 
-    public void setRefrigeratorBand(String refrigeratorBand) {
-        this.refrigeratorBand = refrigeratorBand;
-    }
-
     public String getRefrigeratorSN() {
         return refrigeratorSN;
-    }
-
-    public void setRefrigeratorSN(String refrigeratorSN) {
-        this.refrigeratorSN = refrigeratorSN;
     }
 
     public String getRefrigeratorIDCode() {
         return refrigeratorIDCode;
     }
 
-    public void setRefrigeratorIDCode(String refrigeratorIDCode) {
-        this.refrigeratorIDCode = refrigeratorIDCode;
-    }
-
     public String getRefrigeratorHNNo() {
         return refrigeratorHNNo;
-    }
-
-    public void setRefrigeratorHNNo(String refrigeratorHNNo) {
-        this.refrigeratorHNNo = refrigeratorHNNo;
     }
 
     public String getRefrigeratorTempSetpoint() {
         return refrigeratorTempSetpoint;
     }
 
-    public void setRefrigeratorTempSetpoint(String refrigeratorTempSetpoint) {
-        this.refrigeratorTempSetpoint = refrigeratorTempSetpoint;
-    }
-
     public String getRefrigeratorAccuracy() {
         return refrigeratorAccuracy;
-    }
-
-    public void setRefrigeratorAccuracy(String refrigeratorAccuracy) {
-        this.refrigeratorAccuracy = refrigeratorAccuracy;
     }
 
     public String getRefrigeratorUseRangefrom() {
         return refrigeratorUseRangefrom;
     }
 
-    public void setRefrigeratorUseRangefrom(String refrigeratorUseRangefrom) {
-        this.refrigeratorUseRangefrom = refrigeratorUseRangefrom;
-    }
-
     public String getRefrigeratorUseRangeTo() {
         return refrigeratorUseRangeTo;
-    }
-
-    public void setRefrigeratorUseRangeTo(String refrigeratorUseRangeTo) {
-        this.refrigeratorUseRangeTo = refrigeratorUseRangeTo;
     }
 
     public String getRefrigeratorOpenDoorTime() {
         return refrigeratorOpenDoorTime;
     }
 
-    public void setRefrigeratorOpenDoorTime(String refrigeratorOpenDoorTime) {
-        this.refrigeratorOpenDoorTime = refrigeratorOpenDoorTime;
-    }
-
     public String getRefrigeratorPMCALInterval() {
         return refrigeratorPMCALInterval;
     }
 
-    public void setRefrigeratorPMCALInterval(String refrigeratorPMCALInterval) {
-        this.refrigeratorPMCALInterval = refrigeratorPMCALInterval;
+    public String getTempIn() {
+        return tempIn;
     }
 
+    public String getTempOut() {
+        return tempOut;
+    }
+
+    public String getHumid() {
+        return humid;
+    }
+
+    public String getStatusOpenDoor() {
+        return statusOpenDoor;
+    }
+
+    public String getStatusRefrigde() {
+        return statusRefrigde;
+    }
+
+    public String getUrlToWeb() {
+        return urlToWeb;
+    }
 
     @Override
     public int describeContents() {
@@ -333,6 +276,12 @@ public class RefridgeGson implements Parcelable {
         dest.writeString(this.refrigeratorUseRangeTo);
         dest.writeString(this.refrigeratorOpenDoorTime);
         dest.writeString(this.refrigeratorPMCALInterval);
+        dest.writeString(this.tempIn);
+        dest.writeString(this.tempOut);
+        dest.writeString(this.humid);
+        dest.writeString(this.statusOpenDoor);
+        dest.writeString(this.statusRefrigde);
+        dest.writeString(this.urlToWeb);
     }
 
     protected RefridgeGson(Parcel in) {
@@ -362,6 +311,12 @@ public class RefridgeGson implements Parcelable {
         this.refrigeratorUseRangeTo = in.readString();
         this.refrigeratorOpenDoorTime = in.readString();
         this.refrigeratorPMCALInterval = in.readString();
+        this.tempIn = in.readString();
+        this.tempOut = in.readString();
+        this.humid = in.readString();
+        this.statusOpenDoor = in.readString();
+        this.statusRefrigde = in.readString();
+        this.urlToWeb = in.readString();
     }
 
     public static final Parcelable.Creator<RefridgeGson> CREATOR = new Parcelable.Creator<RefridgeGson>() {

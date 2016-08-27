@@ -17,8 +17,11 @@ public interface TempMonitorService {
 
 
     //http://telecorp.co.th/tmmobile/HLAuthenUserData.ashx?Username=puthinan&Password=P@ssw0rd1168
-    @GET("HLAuthenUserData.ashx")
-    Call<UserGson> login(@Query("Username") String username, @Query("Password") String password);
+    //http://telecorp.co.th/tmmobile/HLAuthenUserData.ashx?Username=Puthinan&Password=1168&DeviceID=1231231214324sdsd&Platform=IOS
+    String DEFAULT_PLATFORM = "Android";
+
+    @GET("HLAuthenUserData.ashx?Platform=Android")
+    Call<UserGson> login(@Query("Username") String username, @Query("Password") String password, @Query("DeviceID") String deviceId);
 
 //    http://telecorp.co.th/tmmobile/HLGetRefrigerator.ashx?MSOrganisationUID=1
 
@@ -29,7 +32,7 @@ public interface TempMonitorService {
     @GET("HLGetRefrigeratorByRefrigCode.ashx")
     Call<List<RefridgeGson>> getRefrigeratorById(@Query("RegrigeratorCode") String code, @Query("MSOrganisationUID") String userId);
 
-//    http://telecorp.co.th/tmmobile/HLTranctionTemplogData.ashx?RefrigeratorCode=0001
+    //    http://telecorp.co.th/tmmobile/HLTranctionTemplogData.ashx?RefrigeratorCode=0001
     @GET("HLTranctionTemplogData.ashx")
     Call<List<TempLogGson>> getTempLogById(@Query("RefrigeratorCode") String code);
 

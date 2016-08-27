@@ -1,10 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.home.HomeActivity">
+    tools:context=".HomeActivity">
     <item
         android:id="@+id/action_logout"
         android:orderInCategory="100"
         android:title="@string/logout"
         app:showAsAction="never" />
+    <!--<item-->
+        <!--android:id="@+id/action_log_firebase_token"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:title="@string/log_token"-->
+        <!--app:showAsAction="never" />-->
+
 </menu>

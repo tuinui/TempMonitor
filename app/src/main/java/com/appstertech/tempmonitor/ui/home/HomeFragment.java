@@ -5,9 +5,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +34,8 @@ import com.appstertech.tempmonitor.service.model.TempLogGson;
 import com.appstertech.tempmonitor.ui.detail.DetailActivity;
 import com.appstertech.tempmonitor.ui.home.refrigerator.RefridgeRecyclerAdapter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -50,10 +54,116 @@ public class HomeFragment extends BaseFragment {
     @BindView(R.id.swiperefreshlayout_home)
     SwipeRefreshLayout mRefreshLayout;
 
-
-    private RefridgeRecyclerAdapter mAdapter;
-
     private boolean isRequestingRefridge;
+
+    private List<RefridgeGson> mDatas = new ArrayList<>();
+
+    private RefridgeRecyclerAdapter mAdapter = new RefridgeRecyclerAdapter() {
+        @Override
+        public void onBindViewHolder(final RefridgeRecyclerAdapter.ViewHolder holder, int position) {
+            if (null == mDatas || mDatas.isEmpty()) {
+                return;
+            }
+            RefridgeGson data = mDatas.get(position);
+            if (null == data) {
+                return;
+            }
+            String openDoorStatus = data.getStatusOpenDoor();
+
+            if (TextUtils.equals(openDoorStatus, "Not Install")) {
+                //blue
+                ViewCompat.setBackgroundTintList(holder.btnDoorStatus, ColorStateList.valueOf(ContextCompat.getColor(holder.btnDoorStatus.getContext(), R.color.blue_door_status_not_install)));
+            } else if (TextUtils.equals(openDoorStatus, "Close")) {
+                //green
+                ViewCompat.setBackgroundTintList(holder.btnDoorStatus, ColorStateList.valueOf(ContextCompat.getColor(holder.btnDoorStatus.getContext(), R.color.green_door_status_close)));
+            } else if (TextUtils.equals(openDoorStatus, "Open")) {
+                //red
+                ViewCompat.setBackgroundTintList(holder.btnDoorStatus, ColorStateList.valueOf(ContextCompat.getColor(holder.btnDoorStatus.getContext(), R.color.red_door_status_open)));
+
+            }
+            holder.btnDoorStatus.setText(data.getStatusOpenDoor());
+            String tempStr = data.getTempIn();
+
+            if (!TextUtils.isEmpty(tempStr)) {
+                tempStr = tempStr.trim();
+                try {
+                    Float temp = Float.valueOf(tempStr);
+                    Float maxRange = Float.valueOf(data.getMaxRang());
+                    Float minRange = Float.valueOf(data.getMinRang());
+                    if (maxRange >= temp && temp >= minRange) {
+                        holder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.blue_cool));
+                    } else {
+                        holder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.red_hot));
+                    }
+                } catch (Exception e) {
+                    holder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green_no_data));
+                }
+
+                holder.tvTemp.setText(tempStr + "ºC");
+            } else {
+                holder.tvTemp.setText("No Data !");
+                holder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green_no_data));
+            }
+
+            holder.imgMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (null == mDatas || mDatas.isEmpty()) {
+                        return;
+                    }
+                    RefridgeGson data = mDatas.get(holder.getAdapterPosition());
+                    if (null == data) {
+                        return;
+                    }
+                    popUpMenuMore(view, view.getContext(), data.getCode());
+                }
+            });
+
+            holder.tvName.setText(data.getRefrigeratorName());
+            if (!TextUtils.isEmpty(data.getRefrigeratorUseRangefrom()) || !TextUtils.isEmpty(data.getRefrigeratorUseRangeTo())) {
+                holder.tvModelType.setText(data.getRefrigeratorUseRangefrom().trim() + " to " + data.getRefrigeratorUseRangeTo().trim() + " ºC");
+                holder.tvModelType.setVisibility(View.VISIBLE);
+            } else {
+                holder.tvModelType.setVisibility(View.INVISIBLE);
+            }
+
+
+            if (!TextUtils.isEmpty(data.getRefrigeratorTempSetpoint())) {
+                holder.btnTempSetPoint.setText(data.getRefrigeratorTempSetpoint().trim() + "ºC");
+                holder.btnTempSetPoint.setVisibility(View.VISIBLE);
+            } else {
+                holder.btnTempSetPoint.setVisibility(View.INVISIBLE);
+            }
+
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (null == mDatas || mDatas.isEmpty()) {
+                        return;
+                    }
+                    RefridgeGson data = mDatas.get(holder.getAdapterPosition());
+                    if (null == data) {
+                        return;
+                    }
+                    Intent intent = new Intent(view.getContext(), DetailActivity.class);
+                    intent.putExtra(DetailActivity.KEY_DATA_REFRIDGE_GSON, data);
+                    view.getContext().startActivity(intent);
+                }
+            });
+
+        }
+
+
+        @Override
+        public int getItemCount() {
+            if (null == mDatas || mDatas.isEmpty()) {
+                return 0;
+            }
+            return mDatas.size();
+        }
+    };
+
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -74,71 +184,20 @@ public class HomeFragment extends BaseFragment {
     public void onViewCreated(View v, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
         mRecyclerRefridge.setLayoutManager(new LinearLayoutManager(v.getContext(), LinearLayoutManager.VERTICAL, false));
+        mRecyclerRefridge.setAdapter(mAdapter);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestRefridge(SharedPrefUtils.getUser(getActivity()).getUserId(), getActivity());
+                if (null != SharedPrefUtils.getUser(getActivity())) {
+                    requestRefridge(SharedPrefUtils.getUser(getActivity()).getOrganisationId(), getActivity());
+                }
+
             }
         });
     }
 
-    private void notifyRefridgeData(final List<RefridgeGson> datas) {
-        mAdapter = new RefridgeRecyclerAdapter() {
-            @Override
-            public void onBindViewHolder(final ViewHolder holder, int position) {
-                RefridgeGson data = datas.get(position);
-                holder.btnDoorStatus.setText("Door close");
-                String tempStr = data.getRefrigeratorPMCALInterval();
 
-                if (!TextUtils.isEmpty(tempStr)) {
-                    if (TextUtils.isDigitsOnly(tempStr)) {
-                        int temp = Integer.valueOf(tempStr);
-                        if (temp > 5) {
-                            holder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.red_hot));
-                        } else {
-                            holder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.blue_cool));
-                        }
-
-                    } else {
-                        holder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green_no_data));
-                    }
-                    holder.tvTemp.setText(data.getRefrigeratorPMCALInterval() + "ºC");
-                } else {
-                    holder.tvTemp.setText("No Data !");
-                    holder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green_no_data));
-                }
-
-                holder.imgMore.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        RefridgeGson data = datas.get(holder.getAdapterPosition());
-                        popUpMenuMore(view, view.getContext(), data.getCode());
-                    }
-                });
-
-                holder.tvName.setText(data.getRefrigeratorName());
-                holder.tvModelType.setText(data.getTypeName());
-
-                holder.btnTempSetPoint.setText(data.getRefrigeratorTempSetpoint() + "ºC");
-
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(view.getContext(), DetailActivity.class);
-                        intent.putExtra(DetailActivity.KEY_DATA_REFRIDGE_GSON, datas.get(holder.getAdapterPosition()));
-                        view.getContext().startActivity(intent);
-                    }
-                });
-
-            }
-
-
-            @Override
-            public int getItemCount() {
-                return datas.size();
-            }
-        };
-        mRecyclerRefridge.setAdapter(mAdapter);
+    private void notifyRefridgeData() {
         mAdapter.notifyDataSetChanged();
     }
 
@@ -160,7 +219,6 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void requestTempLog(final Context context, String refridgeId) {
-//        ProgressDialog dialog = ProgressDialog.show(activity,"",activity.getString(R.string.Loading));
         Call<List<TempLogGson>> call = RetrofitManager.build().create(TempMonitorService.class).getTempLogById(refridgeId);
         showLoading();
         call.enqueue(new Callback<List<TempLogGson>>() {
@@ -186,6 +244,15 @@ public class HomeFragment extends BaseFragment {
         });
     }
 
+    private HashMap<String, RefridgeGson> mMapDatas = new HashMap<>();
+
+//    private HashMap<String,RefridgeGson> parseToMap(List<RefridgeGson> datas){
+//        HashMap<String,RefridgeGson> mapDatas = new HashMap<>();
+//        for(RefridgeGson data : datas){
+//            mapDatas.put(data.get)
+//        }
+//    }
+
 
     private void showMoreTempHistory(List<TempLogGson> datas, final Context context) {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
@@ -193,15 +260,15 @@ public class HomeFragment extends BaseFragment {
 
         final ArrayAdapter<TempLogGson> arrayAdapter = new ArrayAdapter<TempLogGson>(
                 context,
-                android.R.layout.simple_list_item_1, datas){
+                R.layout.view_temperature_history_log, R.id.textview_temperature_history_log_text, datas) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                TextView tv = (TextView) super.getView(position, convertView, parent).findViewById(android.R.id.text1);
-                TempLogGson data=   getItem(position);
+                TextView tv = (TextView) super.getView(position, convertView, parent);
+                TempLogGson data = getItem(position);
                 String displayStr = "Humid : " + data.getHumid() + " \n"
                         + "TempIn : " + data.getTempIn() + " \n"
                         + "TempOut : " + data.getTempOut() + " \n"
-                        + "Time : " + data.getDateTime() + " \n";
+                        + "Time : " + data.getDateTime();
 
                 tv.setText(displayStr);
                 return tv;
@@ -232,7 +299,8 @@ public class HomeFragment extends BaseFragment {
         showLoading();
         Retrofit retrofit = RetrofitManager.build();
         TempMonitorService service = retrofit.create(TempMonitorService.class);
-        Call<List<RefridgeGson>> call = service.getRefrigerator(UID);
+        Call<List<RefridgeGson>> call = service.getRefrigerator(String.valueOf(0));
+        //TODO change back to UID
         isRequestingRefridge = true;
         call.enqueue(new Callback<List<RefridgeGson>>() {
             @Override
@@ -240,8 +308,11 @@ public class HomeFragment extends BaseFragment {
                 isRequestingRefridge = false;
                 dismissLoading();
                 if (response.isSuccessful()) {
+                    mDatas.clear();
+                    mDatas.addAll(response.body());
                     if (null != activity && !activity.isFinishing()) {
-                        notifyRefridgeData(response.body());
+
+                        notifyRefridgeData();
                     }
                 } else {
                     Toast.makeText(activity, "requestRefridge failed", Toast.LENGTH_LONG).show();
@@ -261,6 +332,9 @@ public class HomeFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        requestRefridge(SharedPrefUtils.getUser(getActivity()).getUserId(), getActivity());
+        if (null != SharedPrefUtils.getUser(getActivity()) && mDatas.isEmpty() && SharedPrefUtils.getUser(getActivity()) != null) {
+            requestRefridge(SharedPrefUtils.getUser(getActivity()).getOrganisationId(), getActivity());
+        }
+
     }
 }

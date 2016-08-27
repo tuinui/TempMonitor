@@ -1,5 +1,8 @@
 package com.appstertech.tempmonitor.ui.detail;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -8,14 +11,18 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appstertech.tempmonitor.BaseActivity;
 import com.appstertech.tempmonitor.R;
 import com.appstertech.tempmonitor.service.model.RefridgeGson;
 import com.bumptech.glide.Glide;
+
+import java.net.URL;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,6 +60,17 @@ public class DetailActivity extends BaseActivity {
         setData(getData());
     }
 
+    private void linkToWeb(String url, Context context) {
+        if (URLUtil.isNetworkUrl(url)) {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            context.startActivity(i);
+        } else {
+            Toast.makeText(context, "Link to web not available", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     private void setData(RefridgeGson data) {
         if (null == data) {
             return;
@@ -62,6 +80,12 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 ActivityCompat.finishAfterTransition(DetailActivity.this);
+            }
+        });
+        mBtnLinkToWeb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linkToWeb(getData().getUrlToWeb(), v.getContext());
             }
         });
 

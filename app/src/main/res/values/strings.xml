@@ -108,4 +108,5 @@
     </string>
     <string name="temperature_log">Temperature Log</string>
     <string name="Loading">Loading...</string>
+    <string name="log_token">log token</string>
 </resources>

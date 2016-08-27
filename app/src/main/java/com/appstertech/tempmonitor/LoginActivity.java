@@ -20,10 +20,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.appstertech.tempmonitor.database.SharedPrefUtils;
-import com.appstertech.tempmonitor.ui.home.HomeActivity;
 import com.appstertech.tempmonitor.service.RetrofitManager;
 import com.appstertech.tempmonitor.service.TempMonitorService;
 import com.appstertech.tempmonitor.service.model.UserGson;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,8 +38,8 @@ import retrofit2.Retrofit;
 public class LoginActivity extends BaseActivity {
 
 
-
-    @BindView(R.id.autocompletetextview_login_email) AutoCompleteTextView mAutoCompleteEmail;
+    @BindView(R.id.autocompletetextview_login_email)
+    AutoCompleteTextView mAutoCompleteEmail;
     @BindView(R.id.textinputlayout_login_email)
     TextInputLayout mTextInputLayoutEmail;
     @BindView(R.id.edittext_login_password)
@@ -86,23 +86,23 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mAutoCompleteEmail.setText("puthinan");
-        mEditTextPassword.setText("P@ssw0rd1168");
+//        mAutoCompleteEmail.setText("puthinan");
+//        mEditTextPassword.setText("P@ssw0rd1168");
+        mAutoCompleteEmail.setText("TextMobile2");
+        mEditTextPassword.setText("P@ssw0rd");
     }
 
-    private void attempLaunchHome(){
-        if(SharedPrefUtils.isUserLogin(this)){
+    private void attempLaunchHome() {
+        if (SharedPrefUtils.isUserLogin(this)) {
             gotoHomeActivity();
         }
     }
 
-    private void gotoHomeActivity(){
+    private void gotoHomeActivity() {
         Intent intent = new Intent(this, HomeActivity.class);
         finish();
         startActivity(intent);
     }
-
-
 
 
     /**
@@ -147,25 +147,26 @@ public class LoginActivity extends BaseActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            requestLogin(email,password);
+            requestLogin(email, password);
         }
     }
 
-    private void requestLogin(String email,String password){
+    private void requestLogin(String email, String password) {
         Retrofit retrofit = RetrofitManager.build();
         TempMonitorService service = retrofit.create(TempMonitorService.class);
-        Call<UserGson> call =  service.login(email,password);
+        String deviceId = FirebaseInstanceId.getInstance().getToken();
+        Call<UserGson> call = service.login(email, password, deviceId);
         isRequestingLogin = true;
         call.enqueue(new Callback<UserGson>() {
             @Override
             public void onResponse(Call<UserGson> call, Response<UserGson> response) {
                 isRequestingLogin = false;
                 showProgress(false);
-                if(response.isSuccessful()){
-                    SharedPrefUtils.saveUser(LoginActivity.this,response.body());
+                if (response.isSuccessful()) {
+                    SharedPrefUtils.saveUser(LoginActivity.this, response.body());
                     gotoHomeActivity();
-                }else{
-                    Snackbar.make(findViewById(android.R.id.content),"Login failed",Snackbar.LENGTH_LONG).show();
+                } else {
+                    Snackbar.make(findViewById(android.R.id.content), "Login failed", Snackbar.LENGTH_LONG).show();
                 }
             }
 
@@ -173,7 +174,7 @@ public class LoginActivity extends BaseActivity {
             public void onFailure(Call<UserGson> call, Throwable t) {
                 isRequestingLogin = false;
                 showProgress(false);
-                Snackbar.make(findViewById(android.R.id.content),"Login failed",Snackbar.LENGTH_LONG).show();
+                Snackbar.make(findViewById(android.R.id.content), "Login failed", Snackbar.LENGTH_LONG).show();
             }
         });
     }

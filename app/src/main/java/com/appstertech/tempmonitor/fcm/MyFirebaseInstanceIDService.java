@@ -3,8 +3,17 @@ package com.appstertech.tempmonitor.fcm;
 
 import android.util.Log;
 
+import com.appstertech.tempmonitor.database.SharedPrefUtils;
+import com.appstertech.tempmonitor.service.RetrofitManager;
+import com.appstertech.tempmonitor.service.TempMonitorService;
+import com.appstertech.tempmonitor.service.model.UserGson;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by nuimamon on 17/8/2559.
@@ -34,13 +43,29 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
     /**
      * Persist token to third-party servers.
-     * <p>
+     * <p/>
      * Modify this method to associate the user's FCM InstanceID token with any server-side account
      * maintained by your application.
      *
-     * @param token The new token.
+     * @param deviceId The new token.
      */
-    private void sendRegistrationToServer(String token) {
+    private void sendRegistrationToServer(String deviceId) {
         //TODO implement registeration device id to server
+        UserGson user = SharedPrefUtils.getUser(this);
+        if (null != user) {
+            RetrofitManager.build().create(TempMonitorService.class)
+                    .refreshDeviceId(user.getUserId(), deviceId)
+                    .enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                        }
+                    });
+        }
     }
 }

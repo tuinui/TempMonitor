@@ -6,6 +6,7 @@ import com.appstertech.tempmonitor.service.model.UserGson;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -35,5 +36,9 @@ public interface TempMonitorService {
     //    http://telecorp.co.th/tmmobile/HLTranctionTemplogData.ashx?RefrigeratorCode=0001
     @GET("HLTranctionTemplogData.ashx")
     Call<List<TempLogGson>> getTempLogById(@Query("RefrigeratorCode") String code);
+
+    //http://telecorp.co.th/tmmobile/UpdateDiviceID.ashx?UserUID=4&DeviceID=Test1&Platform=IOS
+    @GET("UpdateDiviceID.ashx?Platform=Android")
+    Call<ResponseBody> refreshDeviceId(@Query("UserUID") String userId, @Query("DeviceID") String deviceId);
 
 }

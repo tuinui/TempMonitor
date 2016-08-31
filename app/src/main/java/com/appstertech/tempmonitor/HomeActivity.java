@@ -3,12 +3,10 @@ package com.appstertech.tempmonitor;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.appstertech.tempmonitor.database.SharedPrefUtils;
 import com.appstertech.tempmonitor.ui.home.HomeFragment;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 public class HomeActivity extends BaseActivity {
     private Toolbar mToolbar;

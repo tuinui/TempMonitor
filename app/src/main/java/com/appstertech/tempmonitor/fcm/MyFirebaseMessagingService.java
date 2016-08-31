@@ -10,8 +10,8 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.appstertech.tempmonitor.R;
 import com.appstertech.tempmonitor.HomeActivity;
+import com.appstertech.tempmonitor.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;

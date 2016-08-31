@@ -86,8 +86,8 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        mAutoCompleteEmail.setText("puthinan");
-//        mEditTextPassword.setText("P@ssw0rd1168");
+        mAutoCompleteEmail.setText("puthinan");
+        mEditTextPassword.setText("P@ssw0rd1168");
 //        mAutoCompleteEmail.setText("TestMobile2");
 //        mEditTextPassword.setText("P@ssw0rd");
     }

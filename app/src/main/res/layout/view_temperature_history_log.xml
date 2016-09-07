@@ -1,13 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/textview_temperature_history_log_text"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:drawable/editbox_background"
-    android:gravity="center_vertical"
+
+    android:background="@android:drawable/editbox_background_normal"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:padding="8dp"
-    android:textAppearance="?android:attr/textAppearanceListItemSmall"
-    tools:text="hello" />
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textview_temperature_history_log_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="4dp"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:textStyle="bold"
+        tools:text="hello" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="4dp"
+            android:text="Temperature In : "
+            android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+
+        <TextView
+            android:id="@+id/textview_temperature_history_log_tempin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="4dp"
+            android:textAppearance="?android:attr/textAppearanceListItemSmall"
+            android:textColor="@color/blue_cool"
+            tools:text="hello" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="4dp"
+            android:text="Temperature Out : "
+            android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+
+        <TextView
+            android:id="@+id/textview_temperature_history_log_tempout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="4dp"
+            android:textAppearance="?android:attr/textAppearanceListItemSmall"
+            android:textColor="@color/green_door_status_close"
+            tools:text="hello" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textview_temperature_history_log_humid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="4dp"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        tools:text="hello" />
+</LinearLayout>

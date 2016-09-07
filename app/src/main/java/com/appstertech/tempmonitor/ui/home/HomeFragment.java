@@ -15,12 +15,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -90,16 +93,11 @@ public class HomeFragment extends BaseFragment {
 
                 if (!TextUtils.isEmpty(tempStr)) {
                     tempStr = tempStr.trim();
-                    try {
-                        Float temp = Float.valueOf(tempStr);
-                        Float maxRange = Float.valueOf(data.getMaxRang());
-                        Float minRange = Float.valueOf(data.getMinRang());
-                        if (maxRange >= temp && temp >= minRange) {
-                            dataHolder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(dataHolder.itemView.getContext(), R.color.blue_cool));
-                        } else {
-                            dataHolder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(dataHolder.itemView.getContext(), R.color.red_hot));
-                        }
-                    } catch (Exception e) {
+                    if (TextUtils.equals(data.getColorWarning(), RefridgeGson.COLOR_WARNING_BLUE)) {
+                        dataHolder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(dataHolder.itemView.getContext(), R.color.blue_cool));
+                    } else if (TextUtils.equals(data.getColorWarning(), RefridgeGson.COLOR_WARNING_RED)) {
+                        dataHolder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(dataHolder.itemView.getContext(), R.color.red_hot));
+                    } else {
                         dataHolder.cardRoot.setCardBackgroundColor(ContextCompat.getColor(dataHolder.itemView.getContext(), R.color.green_no_data));
                     }
 
@@ -291,11 +289,12 @@ public class HomeFragment extends BaseFragment {
 
             String locationName = data.getLocationName();
             if (map.containsKey(locationName)) {
-                for (RefridgeGson data2 : datas) {
-                    if (TextUtils.equals(data2.getLocationName(), locationName)) {
-                        map.get(locationName).add(data2);
-                    }
-                }
+                map.get(locationName).add(data);
+//                for (RefridgeGson data2 : datas) {
+//                    if (TextUtils.equals(data2.getLocationName(), locationName)) {
+//                        map.get(locationName).add(data2);
+//                    }
+//                }
             } else {
                 List<RefridgeGson> list = new ArrayList<>();
                 RefridgeGson header = new RefridgeGson();
@@ -314,18 +313,30 @@ public class HomeFragment extends BaseFragment {
 
         final ArrayAdapter<TempLogGson> arrayAdapter = new ArrayAdapter<TempLogGson>(
                 context,
-                R.layout.view_temperature_history_log, R.id.textview_temperature_history_log_text, datas) {
+                R.layout.view_temperature_history_log, R.id.textview_temperature_history_log_time, datas) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                TextView tv = (TextView) super.getView(position, convertView, parent);
                 TempLogGson data = getItem(position);
-                String displayStr = "Humid : " + data.getHumid() + " \n"
-                        + "TempIn : " + data.getTempIn() + " \n"
-                        + "TempOut : " + data.getTempOut() + " \n"
-                        + "Time : " + data.getDateTime();
+                LinearLayout linearLayout = (LinearLayout) super.getView(position, convertView, parent);
+                TextView tvTime = (TextView) linearLayout.findViewById(R.id.textview_temperature_history_log_time);
+                TextView tvHumid = (TextView) linearLayout.findViewById(R.id.textview_temperature_history_log_humid);
+                TextView tvTempIn = (TextView) linearLayout.findViewById(R.id.textview_temperature_history_log_tempin);
+                TextView tvTempOut = (TextView) linearLayout.findViewById(R.id.textview_temperature_history_log_tempout);
+                String time = "Time : " + data.getDateTime();
+                String tempIn = String.format(Locale.getDefault(), "%.02f", data.getTempIn()) + " °C";
+                String tempOut = String.format(Locale.getDefault(), "%.02f", data.getTempOut()) + " °C";
+                String humidityOut = "Humidity Out : " + data.getHumid() + " % ";
+                tvTime.setText(time);
+                tvTempIn.setText(Html.fromHtml(tempIn));
+                tvTempOut.setText(Html.fromHtml(tempOut));
+                tvHumid.setText(humidityOut);
+//                String displayStr = "Humidity Out  : " + data.getHumid() + " \n"
+//                        + "TempIn : " + data.getTempIn() + " \n"
+//                        + "TempOut : " + data.getTempOut() + " \n"
+//                        + "Time : " + data.getDateTime();
 
-                tv.setText(displayStr);
-                return tv;
+//                tv.setText(displayStr);
+                return linearLayout;
             }
         };
 

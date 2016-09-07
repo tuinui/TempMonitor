@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.Button;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.appstertech.tempmonitor.BaseActivity;
 import com.appstertech.tempmonitor.R;
+import com.appstertech.tempmonitor.database.SharedPrefUtils;
 import com.appstertech.tempmonitor.service.model.RefridgeGson;
 import com.bumptech.glide.Glide;
 
@@ -63,7 +65,14 @@ public class DetailActivity extends BaseActivity {
     private void linkToWeb(String url, Context context) {
         if (URLUtil.isNetworkUrl(url)) {
             Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(url));
+            if (SharedPrefUtils.getUser(context) != null && !TextUtils.isEmpty(SharedPrefUtils.getUser(context).getUsername()) && !TextUtils.isEmpty(SharedPrefUtils.getUser(context).getPassword())) {
+                String queryParameter = "?username=" + SharedPrefUtils.getUser(context).getUsername() + "&password=" + SharedPrefUtils.getUser(context).getPassword();
+                i.setData(Uri.parse(url + queryParameter));
+            } else {
+                i.setData(Uri.parse(url));
+            }
+
+
             context.startActivity(i);
         } else {
             Toast.makeText(context, "Link to web not available", Toast.LENGTH_SHORT).show();
@@ -107,7 +116,7 @@ public class DetailActivity extends BaseActivity {
         if (getIntent() != null) {
             return getIntent().getParcelableExtra(KEY_DATA_REFRIDGE_GSON);
         } else {
-            return null;
+            return new RefridgeGson();
         }
     }
 }

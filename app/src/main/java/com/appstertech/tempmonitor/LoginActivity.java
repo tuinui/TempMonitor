@@ -86,8 +86,8 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mAutoCompleteEmail.setText("puthinan");
-        mEditTextPassword.setText("P@ssw0rd1168");
+//        mAutoCompleteEmail.setText("puthinan");
+//        mEditTextPassword.setText("1168");
 //        mAutoCompleteEmail.setText("TestMobile2");
 //        mEditTextPassword.setText("P@ssw0rd");
     }
@@ -151,7 +151,7 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private void requestLogin(String email, String password) {
+    private void requestLogin(final String email, final String password) {
         Retrofit retrofit = RetrofitManager.build();
         TempMonitorService service = retrofit.create(TempMonitorService.class);
         String deviceId = FirebaseInstanceId.getInstance().getToken();
@@ -163,7 +163,10 @@ public class LoginActivity extends BaseActivity {
                 isRequestingLogin = false;
                 showProgress(false);
                 if (response.isSuccessful() && null != response.body()) {
-                    SharedPrefUtils.saveUser(LoginActivity.this, response.body());
+                    UserGson user = response.body();
+                    user.setUsername(email);
+                    user.setPassword(password);
+                    SharedPrefUtils.saveUser(LoginActivity.this, user);
                     gotoHomeActivity();
                 } else {
                     Snackbar.make(findViewById(android.R.id.content), "Login failed", Snackbar.LENGTH_LONG).show();

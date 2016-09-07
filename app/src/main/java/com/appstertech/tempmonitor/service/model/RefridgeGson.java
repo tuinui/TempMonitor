@@ -2,8 +2,11 @@ package com.appstertech.tempmonitor.service.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
+
+import java.util.Objects;
 
 /**
  * Created by nuimamon on 31/7/2559.
@@ -41,6 +44,8 @@ public class RefridgeGson implements Parcelable {
 //            "StatusOpenDoors": "Close",
 //            "StatusRefrig": "",
 //            "LinkWeb": "http://www.telecorp.co.th/HM/login/Loadlogin"
+    public static final String COLOR_WARNING_BLUE = "blue";
+    public static final String COLOR_WARNING_RED = "red";
     @SerializedName("Code")
     private String code;
     @SerializedName("RefrigeratorName")
@@ -113,10 +118,17 @@ public class RefridgeGson implements Parcelable {
     private String urlToWeb;
 
 
+    @SerializedName("colorwarnning")
+    private String colorWarning;
 
 
     private String headerLocationViewTitle = null;
+
     public RefridgeGson() {
+    }
+
+    public String getColorWarning() {
+        return colorWarning;
     }
 
     public String getCode() {
@@ -342,4 +354,21 @@ public class RefridgeGson implements Parcelable {
     public void setHeaderLocationViewTitle(String headerLocationViewTitle) {
         this.headerLocationViewTitle = headerLocationViewTitle;
     }
+
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) {
+//            return true;
+//        }
+//        if (!(o instanceof RefridgeGson)) {
+//            return false;
+//        }
+//        RefridgeGson otherObject = (RefridgeGson) o;
+//        return TextUtils.equals(otherObject.getCode(), this.getCode());
+//    }
+
+//    @Override
+//    public int hashCode() {
+//        return super.hashCode();
+//    }
 }

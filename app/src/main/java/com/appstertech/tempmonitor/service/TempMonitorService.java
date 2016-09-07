@@ -24,6 +24,11 @@ public interface TempMonitorService {
     @GET("HLAuthenUserData.ashx?Platform=Android")
     Call<UserGson> login(@Query("Username") String username, @Query("Password") String password, @Query("DeviceID") String deviceId);
 
+
+    //http://telecorp.co.th/tmmobile/HLDeviceLogOutLog.ashx?Username=Puthinan
+    @GET("HLDeviceLogOutLog.ashx?Platform=Android")
+    Call<Void> logout(@Query("Username") String username);
+
 //    http://telecorp.co.th/tmmobile/HLGetRefrigerator.ashx?MSOrganisationUID=1
 
     @GET("HLGetRefrigerator.ashx")
@@ -40,5 +45,6 @@ public interface TempMonitorService {
     //http://telecorp.co.th/tmmobile/UpdateDiviceID.ashx?UserUID=4&DeviceID=Test1&Platform=IOS
     @GET("UpdateDiviceID.ashx?Platform=Android")
     Call<ResponseBody> refreshDeviceId(@Query("UserUID") String userId, @Query("DeviceID") String deviceId);
+
 
 }

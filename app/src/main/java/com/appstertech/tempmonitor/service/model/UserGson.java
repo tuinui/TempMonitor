@@ -1,15 +1,17 @@
 package com.appstertech.tempmonitor.service.model;
 
+import android.support.v4.media.session.MediaSessionCompat;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by nuimamon on 30/7/2559.
  */
 public class UserGson {
-/*    "UID": 4
-            "FullName": "Mr.Puthi Puthi",
-            "OrganisationID": 1,
-            "TypeUser": "Admin"*/
+    /*    "UID": 4
+                "FullName": "Mr.Puthi Puthi",
+                "OrganisationID": 1,
+                "TypeUser": "Admin"*/
     @SerializedName("UID")
     private String userId;
     @SerializedName("FullName")
@@ -18,6 +20,11 @@ public class UserGson {
     private String organisationId;
     @SerializedName("TypeUser")
     private String typeUser;
+    @SerializedName("Username")
+    private String username;
+    @SerializedName("Password")
+    private String password;
+
 
     public UserGson() {
     }
@@ -53,4 +60,21 @@ public class UserGson {
     public void setTypeUser(String typeUser) {
         this.typeUser = typeUser;
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
 }

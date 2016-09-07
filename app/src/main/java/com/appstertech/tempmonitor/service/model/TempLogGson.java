@@ -24,11 +24,11 @@ public class TempLogGson {
     @SerializedName("Code")
     private String code;
     @SerializedName("ftempin")
-    private String tempIn;
+    private float tempIn;
     @SerializedName("ftempout")
-    private String tempOut;
+    private float tempOut;
     @SerializedName("fhumi")
-    private String humid;
+    private float humid;
     @SerializedName("datetime")
     private String dateTime;//2016-04-26 15:34:12"
 
@@ -51,29 +51,6 @@ public class TempLogGson {
         this.code = code;
     }
 
-    public String getTempIn() {
-        return tempIn;
-    }
-
-    public void setTempIn(String tempIn) {
-        this.tempIn = tempIn;
-    }
-
-    public String getTempOut() {
-        return tempOut;
-    }
-
-    public void setTempOut(String tempOut) {
-        this.tempOut = tempOut;
-    }
-
-    public String getHumid() {
-        return humid;
-    }
-
-    public void setHumid(String humid) {
-        this.humid = humid;
-    }
 
     @Override
     public String toString() {
@@ -103,6 +80,18 @@ public class TempLogGson {
 
         format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
         return format.format(newDate);
+    }
+
+    public float getHumid() {
+        return humid;
+    }
+
+    public float getTempIn() {
+        return tempIn;
+    }
+
+    public float getTempOut() {
+        return tempOut;
     }
 
     public void setDateTime(String dateTime) {

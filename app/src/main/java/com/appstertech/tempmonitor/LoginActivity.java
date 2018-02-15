@@ -88,6 +88,10 @@ public class LoginActivity extends BaseActivity {
         super.onStart();
 //        mAutoCompleteEmail.setText("puthinan");
 //        mEditTextPassword.setText("1168");
+        if (BuildConfig.DEBUG) {
+            mAutoCompleteEmail.setText("testmobile1");
+            mEditTextPassword.setText("P@ssw0rd");
+        }
 //        mAutoCompleteEmail.setText("TestMobile2");
 //        mEditTextPassword.setText("P@ssw0rd");
     }
